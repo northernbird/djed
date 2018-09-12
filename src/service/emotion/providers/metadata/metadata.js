@@ -4,16 +4,14 @@ import _ from 'lodash';
 
 const analyse = (textString) => {
 
-    console.log('TextString : ' + textString);
-
     return new Promise((resolve, reject) => {
         const API_KEY = process.env['METADATA_API_KEY'];
         request(`http://ap.mextractr.net/ma9/emotion_analyzer?out=json&apikey=${API_KEY}&text=${urlencode(textString)}`)
             .then(function (stringResult) {
 
-                const result = JSON.parse(stringResult);
-                parseResult(urlencode.decode(result.analyzed_text));
-                resolve(stringResult);
+                const json = JSON.parse(stringResult);
+                const result = parseResult(urlencode.decode(json.analyzed_text));
+                resolve(result);
 
             })
             .catch(function (err) {
@@ -25,17 +23,23 @@ const analyse = (textString) => {
 
 const parseResult = (result) => {
 
-    console.log('parseResult : ' + result);
-
     const regex = /【.+?】 \[.+?\]  】/g;
 
     const match = result.match(regex);
     if (match !== null) {
-        const wordScoreArray = {};
+        const wordScoreArray = {
+            totalLike : 0,
+            totalJoy : 0,
+            totalAnger : 0,
+        };
         _.forEach(match, (oneMatch) => {
-            parseOneWordScore(oneMatch, wordScoreArray);
+            parseOneWordScore(oneMatch, wordScoreArray, wordScoreArray.totalLike, wordScoreArray.totalJoy, wordScoreArray.totalAnger);
         });
-        console.log('wordScoreArray : ' + JSON.stringify(wordScoreArray));
+        /*
+         * Add score average
+         */
+       // wordScoreArray.totalAverage = ((wordScoreArray.totalLike + wordScoreArray.totalJoy + wordScoreArray.totalAnger) / 3);
+
         return wordScoreArray;
     } else {
         throw new Error(`No emotional result was found : ${result}`);
@@ -43,7 +47,7 @@ const parseResult = (result) => {
 
 };
 
-const parseOneWordScore = (entry, resultObj) => {
+const parseOneWordScore = (entry, resultObj, totalLike, totalJoy, totalAnger) => {
 
     /*
      * Extract word part
@@ -65,6 +69,12 @@ const parseOneWordScore = (entry, resultObj) => {
     const joy = Number(parts[1]);
     const anger = Number(parts[2]);
 
+    /*
+     * Update total scores
+     */
+    totalLike += like;
+    totalJoy += joy;
+    totalAnger += anger;
 
     if(wordScoreObj) {
 

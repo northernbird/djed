@@ -20,13 +20,13 @@ const analyse = (textString)=> {
     return wait.for(callServices, textString);
 };
 
-const asyncAnalyse = (textString)=> {
+const asyncAnalyse = (textString, optionalInfo)=> {
 
-    return new Promise((resolve, reject)=>{
+/*    return new Promise((resolve, reject)=>{
 
-        /*
+        /!*
          * TODO comming various proviers
-         */
+         *!/
         const promises = [];
         promises.push(metadata.analyse(textString));
 
@@ -37,7 +37,22 @@ const asyncAnalyse = (textString)=> {
             reject(error);
         });
 
+    });*/
+
+    return new Promise((resolve, reject)=>{
+
+        metadata.analyse(textString).then((result)=>{
+            resolve({
+                result : result,
+                optionalInfo: optionalInfo
+            });
+        }).catch(function (err) {
+            reject(err);
+        });
+
     });
+
+
 };
 
 module.exports.analyse = analyse;
