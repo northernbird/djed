@@ -1,5 +1,5 @@
 import resource from 'resource-router-middleware';
-import analyser from '../service/emotionAnalyser';
+import analyser from '../service/recommend/recommendAnalyser';
 import wait from 'wait.for';
 
 export default ({ config, db }) => resource({
@@ -10,7 +10,7 @@ export default ({ config, db }) => resource({
 	/** GET / - List all entities */
 	index(req, res) {
 
-	    if(!req.query){
+	    if(!req.query || !req.query.searchText || !req.query.author){
 	        console.log('Query Paramter is empty!');
             return res.send(500);
         }
@@ -27,8 +27,8 @@ export default ({ config, db }) => resource({
 function handle(req, res) {
 
     const searchText = req.query.searchText;
-    const savedRequests = wait.for(analyser.analyse, searchText);
-    console.log('Result : ' + savedRequests);
+    const author = req.query.author;
+    const savedRequests = wait.for(analyser.analyse, author, searchText);
     return res.json(savedRequests);
 
 }
