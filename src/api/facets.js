@@ -7,8 +7,15 @@ export default ({ config, db }) => resource({
 	id : 'facet',
 
 	/** GET / - List all entities */
-	index({ params }, res) {
-		res.json(facets);
+	index(req, res) {
+
+	    if(!req.query){
+	        console.log('Query Paramter is empty!');
+            return res.send(500);
+        }
+
+        console.log('Test : ' + JSON.stringify(req.query));
+		return res.json(facets);
 	},
 
 });
