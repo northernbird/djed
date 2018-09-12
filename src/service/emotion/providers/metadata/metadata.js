@@ -32,7 +32,7 @@ const parseResult = (result) => {
     const match = result.match(regex);
     if (match !== null) {
         const wordScoreArray = {};
-        _.forEach(match, (oneMatch)=> {
+        _.forEach(match, (oneMatch) => {
             parseOneWordScore(oneMatch, wordScoreArray);
         });
         console.log('wordScoreArray : ' + JSON.stringify(wordScoreArray));
@@ -59,9 +59,36 @@ const parseOneWordScore = (entry, resultObj) => {
     const scoreMatch = entry.match(scoreRegex);
     const scorePart = scoreMatch[1];
 
-    const scores = scorePart.split(',');
+    const parts = scorePart.split(',');
+    const wordScoreObj = resultObj[word];
+    const like = Number(parts[0]);
+    const joy = Number(parts[1]);
+    const anger = Number(parts[2]);
 
-    resultObj[word] = scores;
+
+    if(wordScoreObj) {
+
+        /*
+         * Update existing object
+         */
+        wordScoreObj.like += like;
+        wordScoreObj.joy += joy;
+        wordScoreObj.anger += anger;
+        wordScoreObj.count += 1;
+
+    } else {
+
+        /*
+         * Add as a new word
+         */
+        resultObj[word] = {
+            like: like,
+            joy: joy,
+            anger:anger,
+            count: 1,
+        };
+
+    }
 
 };
 
