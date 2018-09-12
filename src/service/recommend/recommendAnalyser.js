@@ -31,11 +31,13 @@ import _ from 'lodash';
 
 };*/
 
+const difference = (a, b) => {
+    return Math.abs(a - b);
+};
+
 const getRecommend = (bookResult, inputResult) => {
 
-    const test1 = sortByClosestScore('totalLike', inputResult.totalLike, bookResult);
-    console.log('totalLike : ' + inputResult.result.totalLike);
-    console.log('AAABBBCCC : ' + JSON.stringify(test1));
+    const test1 = sortByClosestScore('totalLike', inputResult.result.totalLike, bookResult);
 
     return [bookResult, inputResult];
 };
@@ -49,13 +51,13 @@ const sortByClosestScore = (rate, inputScore, bookResult) => {
      */
     for (let outerCnt = 0; outerCnt < newBookResult.length; outerCnt++) {
         const current = newBookResult[outerCnt];
-        let distance = 100;
-        for (let innerCnt = outerCnt + 1; innerCnt < newBookResult.length; innerCnt++) {
-            let newDistance = (newBookResult[innerCnt][rate] - current);
+        let distance = difference(current.result[rate], inputScore);
+        for (let innerCnt = (outerCnt+1); innerCnt < newBookResult.length; innerCnt++) {
+            let newDistance = difference(newBookResult[innerCnt].result[rate], inputScore);
             if (newDistance < distance) {
                 distance = newDistance;
-                let temp = newBookResult[outerCnt + 1];
-                newBookResult[outerCnt + 1] = newBookResult[innerCnt];
+                let temp = newBookResult[innerCnt];
+                newBookResult[innerCnt] = newBookResult[outerCnt];
                 newBookResult[outerCnt] = temp;
             }
         }
