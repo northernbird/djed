@@ -24,21 +24,23 @@ const analyse = (textString) => {
 const parseResult = (result) => {
 
     const regex = /【.+?】 \[.+?\]  】/g;
-
     const match = result.match(regex);
+    const wordScoreArray = {
+        totalLike : 0,
+        totalJoy : 0,
+        totalAnger : 0,
+    };
+
     if (match !== null) {
-        const wordScoreArray = {
-            totalLike : 0,
-            totalJoy : 0,
-            totalAnger : 0,
-        };
+
         _.forEach(match, (oneMatch) => {
             parseOneWordScore(oneMatch, wordScoreArray);
         });
 
         return wordScoreArray;
     } else {
-        throw new Error(`No emotional result was found : ${result}`);
+        console.log(`No emotional result was found : ${result}`);
+        return  wordScoreArray;
     }
 
 };

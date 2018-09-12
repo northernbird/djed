@@ -46,7 +46,10 @@ const getRecommend = (bookResult, inputResult) => {
      */
     const test = _.sortBy([matchedLike, matchedJoy, matchedAnger], (o) => { return o.minDistance; });
 
-    return test[0];
+    return {
+        result : test[0],
+        input : inputResult,
+    };
 };
 
 const sortByTotalScore = (matchedLike, matchedJoy, matchedAnger)=> {

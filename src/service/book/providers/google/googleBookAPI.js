@@ -39,7 +39,7 @@ const getBookInfoAsSync = (author, callback) => {
             _.forEach(result.items, (item)=>{
 
                 const volumnInfo = item.volumeInfo;
-                if(volumnInfo.authors.length === 1 && (volumnInfo.description)) {
+                if(volumnInfo.authors && volumnInfo.authors.length === 1 && (volumnInfo.description)) {
 
                     mappedResult.push({
                         title : volumnInfo.title,
