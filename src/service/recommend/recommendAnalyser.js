@@ -37,14 +37,26 @@ const difference = (a, b) => {
 
 const getRecommend = (bookResult, inputResult) => {
 
-    const test1 = sortByClosestScore('totalLike', inputResult.result.totalLike, bookResult);
+    const matchedLike = sortByClosestScore('totalLike', inputResult.result.totalLike, bookResult);
+    const matchedJoy = sortByClosestScore('totalJoy', inputResult.result.totalLike, bookResult);
+    const matchedAnger = sortByClosestScore('totalAnger', inputResult.result.totalLike, bookResult);
 
-    return [bookResult, inputResult];
+    /*
+     * TODO need refactor and fix to use more correct logic!
+     */
+    const test = _.sortBy([matchedLike, matchedJoy, matchedAnger], (o) => { return o.minDistance; });
+
+    return test[0];
+};
+
+const sortByTotalScore = (matchedLike, matchedJoy, matchedAnger)=> {
+
+    const minDistanceObj = _.sortBy([matchedLike, matchedJoy, matchedAnger], (o) => { return o.minDistance; });
 };
 
 const sortByClosestScore = (rate, inputScore, bookResult) => {
 
-
+    let minDistance = 1000;
     const newBookResult = _.cloneDeep(bookResult);
     /*
      * TODO refactor
@@ -56,6 +68,9 @@ const sortByClosestScore = (rate, inputScore, bookResult) => {
             let newDistance = difference(newBookResult[innerCnt].result[rate], inputScore);
             if (newDistance < distance) {
                 distance = newDistance;
+                if(newDistance < minDistance) {
+                    minDistance = newDistance;
+                }
                 let temp = newBookResult[innerCnt];
                 newBookResult[innerCnt] = newBookResult[outerCnt];
                 newBookResult[outerCnt] = temp;
@@ -64,7 +79,10 @@ const sortByClosestScore = (rate, inputScore, bookResult) => {
 
     }
 
-    return newBookResult;
+    return {
+        sortedResult : newBookResult,
+        minDistance : minDistance
+    };
 };
 
 const analyse = (author, textString) => {
