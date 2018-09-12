@@ -16,7 +16,6 @@ export default ({ config, db }) => resource({
         }
 
         console.log('Request : ' + JSON.stringify(req.query));
-
         wait.launchFiber(handle, req, res);
 
 

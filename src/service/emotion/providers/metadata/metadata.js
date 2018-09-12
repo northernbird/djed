@@ -33,12 +33,8 @@ const parseResult = (result) => {
             totalAnger : 0,
         };
         _.forEach(match, (oneMatch) => {
-            parseOneWordScore(oneMatch, wordScoreArray, wordScoreArray.totalLike, wordScoreArray.totalJoy, wordScoreArray.totalAnger);
+            parseOneWordScore(oneMatch, wordScoreArray);
         });
-        /*
-         * Add score average
-         */
-       // wordScoreArray.totalAverage = ((wordScoreArray.totalLike + wordScoreArray.totalJoy + wordScoreArray.totalAnger) / 3);
 
         return wordScoreArray;
     } else {
@@ -47,7 +43,7 @@ const parseResult = (result) => {
 
 };
 
-const parseOneWordScore = (entry, resultObj, totalLike, totalJoy, totalAnger) => {
+const parseOneWordScore = (entry, resultObj) => {
 
     /*
      * Extract word part
@@ -72,9 +68,9 @@ const parseOneWordScore = (entry, resultObj, totalLike, totalJoy, totalAnger) =>
     /*
      * Update total scores
      */
-    totalLike += like;
-    totalJoy += joy;
-    totalAnger += anger;
+    resultObj.totalLike += like;
+    resultObj.totalJoy += joy;
+    resultObj.totalAnger += anger;
 
     if(wordScoreObj) {
 

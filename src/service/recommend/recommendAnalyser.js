@@ -4,24 +4,24 @@ import Promise from 'bluebird';
 import wait from 'wait.for';
 import _ from 'lodash';
 
-const callServices = (textString, bookInfos, callback) => {
+/*const callServices = (textString, bookInfos, callback) => {
 
     const promises = [];
 
-    /*
+    /!*
      * Analyse for books
-     */
+     *!/
     _.forEach(bookInfos, (bookInfo) => {
         promises.push(emotionAnalyser.asyncAnalyse(bookInfo.description));
     });
-    /*
+    /!*
      * Analyse for given text
-     */
+     *!/
     promises.push(emotionAnalyser.asyncAnalyse(textString));
 
-    /*
+    /!*
      * Go to emotion analyse service asynchronously
-     */
+     *!/
     Promise.all(promises).then((promiseRes) => {
         callback(null, promiseRes);
     }).catch((error) => {
@@ -29,10 +29,40 @@ const callServices = (textString, bookInfos, callback) => {
         callback(null, null);
     });
 
-};
+};*/
 
 const getRecommend = (bookResult, inputResult) => {
+
+    const test1 = sortByClosestScore('totalLike', inputResult.totalLike, bookResult);
+    console.log('totalLike : ' + inputResult.result.totalLike);
+    console.log('AAABBBCCC : ' + JSON.stringify(test1));
+
     return [bookResult, inputResult];
+};
+
+const sortByClosestScore = (rate, inputScore, bookResult) => {
+
+
+    const newBookResult = _.cloneDeep(bookResult);
+    /*
+     * TODO refactor
+     */
+    for (let outerCnt = 0; outerCnt < newBookResult.length; outerCnt++) {
+        const current = newBookResult[outerCnt];
+        let distance = 100;
+        for (let innerCnt = outerCnt + 1; innerCnt < newBookResult.length; innerCnt++) {
+            let newDistance = (newBookResult[innerCnt][rate] - current);
+            if (newDistance < distance) {
+                distance = newDistance;
+                let temp = newBookResult[outerCnt + 1];
+                newBookResult[outerCnt + 1] = newBookResult[innerCnt];
+                newBookResult[outerCnt] = temp;
+            }
+        }
+
+    }
+
+    return newBookResult;
 };
 
 const analyse = (author, textString) => {
@@ -46,7 +76,6 @@ const analyse = (author, textString) => {
      * Analyse book info
      */
     const bookResult = wait.for(analyseBooks, bookInfos);
-    console.log('bookResult : ' + JSON.stringify(bookResult));
     /*
      * Analyse user input
      */
@@ -57,7 +86,6 @@ const analyse = (author, textString) => {
      */
     return getRecommend(bookResult, inputResult);
 
-    //return wait.for(callServices, textString, bookInfos);
 };
 
 const analyseInput = (textString, callback) => {
