@@ -49,7 +49,7 @@ const getBookInfoAsSync = (author, callback) => {
 
                 } else {
 
-                    console.log(`Entry is ignored due to missing info (${volumnInfo})`);
+                    console.log(`Entry is ignored due to missing info (${JSON.stringify(volumnInfo)})`);
                 }
 
             });

@@ -12,7 +12,6 @@ const callServices = (textString, bookInfos, callback) => {
      * Analyse for books
      */
     _.forEach(bookInfos, (bookInfo)=> {
-        console.log('ZUZUZUZUZU');
         promises.push(emotionAnalyser.asyncAnalyse(bookInfo.description));
     });
     /*
@@ -38,6 +37,7 @@ const analyse = (author, textString)=> {
      * Get book info
      */
     const bookInfos = wait.for(bookProvider.getBookInfoAsSync, author);
+    console.log(`${bookInfos.length} data is fetched from book API service.`);
 
     return wait.for(callServices, textString, bookInfos);
 };
