@@ -1,6 +1,6 @@
 import resource from 'resource-router-middleware';
-import facets from '../models/facets';
-
+import analyser from '../service/emotionAnalyser';
+import wait from 'wait.for';
 
 export default ({ config, db }) => resource({
 
@@ -15,10 +15,20 @@ export default ({ config, db }) => resource({
             return res.send(500);
         }
 
-        console.log('TEST : ' + process.env['METADATA_API_KEY']);
+        console.log('Request : ' + JSON.stringify(req.query));
 
-        console.log('Test : ' + JSON.stringify(req.query));
-		return res.json(facets);
+        wait.launchFiber(handle, req, res);
+
+
 	},
 
 });
+
+function handle(req, res) {
+
+    const searchText = req.query.searchText;
+    const savedRequests = wait.for(analyser.analyse, searchText);
+    console.log('Result : ' + savedRequests);
+    return res.json(savedRequests);
+
+}
