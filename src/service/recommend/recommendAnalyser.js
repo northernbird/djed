@@ -41,6 +41,34 @@ const getRecommend = (bookResult, inputResult) => {
     const matchedJoy = sortByClosestScore('totalJoy', inputResult.result.totalLike, bookResult);
     const matchedAnger = sortByClosestScore('totalAnger', inputResult.result.totalLike, bookResult);
 
+    const evaluatedList = [];
+    if(matchedLike.sortedResult[0].totalLike !== 0) {
+        evaluatedList.push(matchedLike);
+    }
+    if(matchedJoy.sortedResult[0].totalLike !== 0) {
+        evaluatedList.push(matchedJoy);
+    }
+    if(matchedAnger.sortedResult[0].totalLike !== 0) {
+        evaluatedList.push(matchedAnger);
+    }
+
+    if(evaluatedList.length > 0) {
+
+        const test = _.sortBy(evaluatedList, (o) => { return o.minDistance; });
+
+        return {
+            result : test[0],
+            input : inputResult,
+        };
+
+    } else {
+
+        return {
+            result : test[0],
+            input : inputResult,
+        };
+
+    }
     /*
      * TODO need refactor and fix to use more correct logic!
      */
@@ -95,19 +123,8 @@ const analyse = (author, textString) => {
      */
     const bookInfos = wait.for(bookProvider.getBookInfoAsSync, author);
     console.log(`${bookInfos.length} data is fetched from book API service.`);
-    /*
-     * Analyse book info
-     */
-    const bookResult = wait.for(analyseBooks, bookInfos);
-    /*
-     * Analyse user input
-     */
-    const inputResult = wait.for(analyseInput, textString);
 
-    /*
-     * Analyse both results then output recommended books
-     */
-    return getRecommend(bookResult, inputResult);
+    return bookInfos;
 
 };
 

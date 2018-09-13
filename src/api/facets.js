@@ -27,7 +27,7 @@ function handle(req, res) {
 
     const searchText = req.query.searchText;
     const author = req.query.author;
-    const result = analyser.analyse(author, searchText)
+    const result = analyser.analyse(author, searchText);
     return res.json(result);
 
 }
