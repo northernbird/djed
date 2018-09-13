@@ -3,118 +3,25 @@ import bookProvider from '../book/providers/google/googleBookAPI';
 import Promise from 'bluebird';
 import wait from 'wait.for';
 import _ from 'lodash';
+import distance from 'euclidean-distance';
 
-/*const callServices = (textString, bookInfos, callback) => {
+const setDistance = (bookInfos, inputResult) => {
 
-    const promises = [];
-
-    /!*
-     * Analyse for books
-     *!/
-    _.forEach(bookInfos, (bookInfo) => {
-        promises.push(emotionAnalyser.asyncAnalyse(bookInfo.description));
-    });
-    /!*
-     * Analyse for given text
-     *!/
-    promises.push(emotionAnalyser.asyncAnalyse(textString));
-
-    /!*
-     * Go to emotion analyse service asynchronously
-     *!/
-    Promise.all(promises).then((promiseRes) => {
-        callback(null, promiseRes);
-    }).catch((error) => {
-        console.log(error.stack);
-        callback(null, null);
+    const inputScores = [inputResult.result.totalLike, inputResult.result.totalJoy, inputResult.result.totalAnger];
+    return _.map(bookInfos, (bookInfo)=> {
+        const compareScores = [bookInfo.result.totalLike, bookInfo.result.totalJoy, bookInfo.result.totalAnger];
+        bookInfo.distance = distance(inputScores, compareScores);
+        return bookInfo;
     });
 
-};*/
-
-const difference = (a, b) => {
-    return Math.abs(a - b);
 };
 
-const getRecommend = (bookResult, inputResult) => {
 
-    const matchedLike = sortByClosestScore('totalLike', inputResult.result.totalLike, bookResult);
-    const matchedJoy = sortByClosestScore('totalJoy', inputResult.result.totalLike, bookResult);
-    const matchedAnger = sortByClosestScore('totalAnger', inputResult.result.totalLike, bookResult);
-
-    const evaluatedList = [];
-    if(matchedLike.sortedResult[0].totalLike !== 0) {
-        evaluatedList.push(matchedLike);
-    }
-    if(matchedJoy.sortedResult[0].totalLike !== 0) {
-        evaluatedList.push(matchedJoy);
-    }
-    if(matchedAnger.sortedResult[0].totalLike !== 0) {
-        evaluatedList.push(matchedAnger);
-    }
-
-    if(evaluatedList.length > 0) {
-
-        const test = _.sortBy(evaluatedList, (o) => { return o.minDistance; });
-
-        return {
-            result : test[0],
-            input : inputResult,
-        };
-
-    } else {
-
-        return {
-            result : test[0],
-            input : inputResult,
-        };
-
-    }
-    /*
-     * TODO need refactor and fix to use more correct logic!
-     */
-    const test = _.sortBy([matchedLike, matchedJoy, matchedAnger], (o) => { return o.minDistance; });
-
-    return {
-        result : test[0],
-        input : inputResult,
-    };
+const getRecommend = (bookInfos, inputResult) => {
+    const bookDistanceInfo = setDistance(bookInfos, inputResult);
+    return _.sortBy(bookDistanceInfo, (o) => { return o.distance; });
 };
 
-const sortByTotalScore = (matchedLike, matchedJoy, matchedAnger)=> {
-
-    const minDistanceObj = _.sortBy([matchedLike, matchedJoy, matchedAnger], (o) => { return o.minDistance; });
-};
-
-const sortByClosestScore = (rate, inputScore, bookResult) => {
-
-    let minDistance = 1000;
-    const newBookResult = _.cloneDeep(bookResult);
-    /*
-     * TODO refactor
-     */
-    for (let outerCnt = 0; outerCnt < newBookResult.length; outerCnt++) {
-        const current = newBookResult[outerCnt];
-        let distance = difference(current.result[rate], inputScore);
-        for (let innerCnt = (outerCnt+1); innerCnt < newBookResult.length; innerCnt++) {
-            let newDistance = difference(newBookResult[innerCnt].result[rate], inputScore);
-            if (newDistance < distance) {
-                distance = newDistance;
-                if(newDistance < minDistance) {
-                    minDistance = newDistance;
-                }
-                let temp = newBookResult[innerCnt];
-                newBookResult[innerCnt] = newBookResult[outerCnt];
-                newBookResult[outerCnt] = temp;
-            }
-        }
-
-    }
-
-    return {
-        sortedResult : newBookResult,
-        minDistance : minDistance
-    };
-};
 
 const analyse = (author, textString) => {
 
@@ -123,8 +30,19 @@ const analyse = (author, textString) => {
      */
     const bookInfos = wait.for(bookProvider.getBookInfoAsSync, author);
     console.log(`${bookInfos.length} data is fetched from book API service.`);
+    /*
+     * Analyse book info
+     */
+    const bookResult = wait.for(analyseBooks, bookInfos);
+    /*
+     * Analyse user input
+     */
+    const inputResult = wait.for(analyseInput, textString);
 
-    return bookInfos;
+    /*
+     * Analyse both results then output recommended books
+     */
+    return getRecommend(bookResult, inputResult);
 
 };
 
