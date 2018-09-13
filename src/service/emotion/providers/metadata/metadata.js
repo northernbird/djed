@@ -29,6 +29,7 @@ const parseResult = (result) => {
         totalLike : 0,
         totalJoy : 0,
         totalAnger : 0,
+        words : {},
     };
 
     if (match !== null) {
@@ -62,7 +63,7 @@ const parseOneWordScore = (entry, resultObj) => {
     const scorePart = scoreMatch[1];
 
     const parts = scorePart.split(',');
-    const wordScoreObj = resultObj[word];
+    const wordScoreObj = resultObj.words[word];
     const like = Number(parts[0]);
     const joy = Number(parts[1]);
     const anger = Number(parts[2]);
@@ -89,7 +90,7 @@ const parseOneWordScore = (entry, resultObj) => {
         /*
          * Add as a new word
          */
-        resultObj[word] = {
+        resultObj.words[word] = {
             like: like,
             joy: joy,
             anger:anger,

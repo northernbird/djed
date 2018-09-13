@@ -17,9 +17,12 @@ const setDistance = (bookInfos, inputResult) => {
 };
 
 
-const getRecommend = (bookInfos, inputResult) => {
+const getRecommendResult = (bookInfos, inputResult) => {
     const bookDistanceInfo = setDistance(bookInfos, inputResult);
-    return _.sortBy(bookDistanceInfo, (o) => { return o.distance; });
+    return {
+        books : _.sortBy(bookDistanceInfo, (o) => { return o.distance; }),
+        input : inputResult,
+    };
 };
 
 
@@ -42,7 +45,7 @@ const analyse = (author, textString) => {
     /*
      * Analyse both results then output recommended books
      */
-    return getRecommend(bookResult, inputResult);
+    return getRecommendResult(bookResult, inputResult);
 
 };
 

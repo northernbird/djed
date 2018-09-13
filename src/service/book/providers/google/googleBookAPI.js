@@ -36,7 +36,7 @@ const getBookInfoByIndexAsAsync = (author, index, callback) => {
      * TODO
      *  maxResults = 40 (max)
      */
-    request(`https://www.googleapis.com/books/v1/volumes?q=inauthor:${urlencode(author)}&maxResults=40&startIndex=${index}`)
+    request(`https://www.googleapis.com/books/v1/volumes?q=inauthor:${urlencode(author)}&maxResults=3&startIndex=${index}`)
         .then(function (stringResult) {
 
             const result = JSON.parse(stringResult);
