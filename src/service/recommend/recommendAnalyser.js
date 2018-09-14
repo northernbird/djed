@@ -6,8 +6,7 @@ import _ from 'lodash';
 import distance from 'euclidean-distance';
 
 const setDistance = (bookInfos, inputResult) => {
-
-    const inputScores = [inputResult.result.totalLike, inputResult.result.totalJoy, inputResult.result.totalAnger];
+    const inputScores = [inputResult.totalLike, inputResult.totalJoy, inputResult.totalAnger];
     return _.map(bookInfos, (bookInfo)=> {
         const compareScores = [bookInfo.result.totalLike, bookInfo.result.totalJoy, bookInfo.result.totalAnger];
         bookInfo.distance = distance(inputScores, compareScores);
@@ -33,14 +32,17 @@ const analyse = (author, textString) => {
      */
     const bookInfos = wait.for(bookProvider.getBookInfoAsSync, author);
     console.log(`${bookInfos.length} data is fetched from book API service.`);
+
     /*
      * Analyse book info
      */
     const bookResult = wait.for(analyseBooks, bookInfos);
+
     /*
      * Analyse user input
      */
-    const inputResult = wait.for(analyseInput, textString);
+    const inputResult = emotionAnalyser.syncAnalyse(textString);
+
 
     /*
      * Analyse both results then output recommended books
@@ -48,18 +50,6 @@ const analyse = (author, textString) => {
     return getRecommendResult(bookResult, inputResult);
 
 };
-
-const analyseInput = (textString, callback) => {
-
-    emotionAnalyser.asyncAnalyse(textString).then((result) => {
-        callback(null, result);
-    }).catch((error) => {
-        console.log(error.stack);
-        callback(error, null);
-    });
-
-};
-
 
 const analyseBooks = (bookInfos, callback) => {
 

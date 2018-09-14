@@ -36,7 +36,7 @@ const getBookInfoByIndexAsAsync = (author, index, callback) => {
      * TODO
      *  maxResults = 40 (max)
      */
-    request(`https://www.googleapis.com/books/v1/volumes?q=inauthor:${urlencode(author)}&maxResults=3&startIndex=${index}`)
+    request(`https://www.googleapis.com/books/v1/volumes?q=inauthor:${urlencode(author)}&maxResults=40&startIndex=${index}`)
         .then(function (stringResult) {
 
             const result = JSON.parse(stringResult);
@@ -80,7 +80,7 @@ const getBookInfoAsSync = (author, callback) => {
     totalCount += bookInfo.length;
     totalBookList.push(...bookInfo);
 
-    while (totalCount <= 1) {
+    while (totalCount <= 10) {
         index += 40;
         bookInfo = wait.for(getBookInfoByIndexAsAsync, author, index);
         if(bookInfo.length <= 0) {

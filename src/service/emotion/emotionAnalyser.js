@@ -2,7 +2,7 @@ import metadata from './providers/metadata/metadata';
 import Promise from 'bluebird';
 import wait from 'wait.for';
 
-const callServices = (textString, callback) => {
+/*const callServices = (textString, callback) => {
 
     const promises = [];
     promises.push(metadata.analyse(textString));
@@ -14,10 +14,10 @@ const callServices = (textString, callback) => {
         callback(error, null);
     });
 
-};
+};*/
 
-const analyse = (textString)=> {
-    return wait.for(callServices, textString);
+const syncAnalyse = (textString)=> {
+    return wait.for(metadata.analyse, textString);
 };
 
 const asyncAnalyse = (textString, optionalInfo, cacheId)=> {
@@ -41,7 +41,7 @@ const asyncAnalyse = (textString, optionalInfo, cacheId)=> {
 
     return new Promise((resolve, reject)=>{
 
-        metadata.analyse(cacheId, textString).then((result)=>{
+        metadata.analyseWithCache(cacheId, textString).then((result)=>{
             resolve({
                 id : cacheId,
                 result : result,
@@ -56,5 +56,5 @@ const asyncAnalyse = (textString, optionalInfo, cacheId)=> {
 
 };
 
-module.exports.analyse = analyse;
+module.exports.syncAnalyse = syncAnalyse;
 module.exports.asyncAnalyse = asyncAnalyse;

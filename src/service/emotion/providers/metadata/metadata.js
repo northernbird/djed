@@ -2,6 +2,7 @@ import request from 'request-promise';
 import urlencode from 'urlencode';
 import _ from 'lodash';
 import MetadataCacheModel from '../../../../models/metadata';
+
 const MetadataCache = MetadataCacheModel.MetadataCache;
 
 const persist = (id, result) => {
@@ -17,22 +18,96 @@ const persist = (id, result) => {
     });
 };
 
-const analyse = (cacheId, textString) => {
+const getCache = (cacheId) => {
 
     return new Promise((resolve, reject) => {
+        MetadataCache
+            .find({id: cacheId}).then((result) => {
+
+            if (!result || result.length === 0) {
+                resolve();
+            } else {
+                resolve(result[0]);
+            }
+
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+
+};
+
+const askAPI = (cacheId, textString) => {
+
+    return new Promise((resolve, reject)=> {
+
         const API_KEY = process.env['METADATA_API_KEY'];
         request(`http://ap.mextractr.net/ma9/emotion_analyzer?out=json&apikey=${API_KEY}&text=${urlencode(textString)}`)
-            .then(function (stringResult) {
+            .then((stringResult) => {
 
                 const json = JSON.parse(stringResult);
                 const result = parseResult(urlencode.decode(json.analyzed_text));
-                persist(cacheId, result);
+                if(cacheId) {
+                    persist(cacheId, result);
+                }
                 resolve(result);
 
             })
-            .catch(function (err) {
+            .catch((err) => {
                 reject(err);
             });
+
+    });
+
+};
+
+const analyse = (textString, callBack) => {
+
+    askAPI(null, textString).then((result)=> {
+
+        callBack(null, result);
+
+    }).catch((err) => {
+
+        callBack(err, null);
+
+    });
+
+};
+
+const analyseWithCache = (cacheId, textString) => {
+
+    return new Promise((resolve, reject) => {
+
+        getCache(cacheId).then((cache) => {
+
+            if(!cache) {
+
+                console.log(`Cache doesn't exist for id : ${cacheId}`);
+                askAPI(cacheId, textString).then((result)=> {
+
+                    resolve(result);
+
+                }).catch((err) => {
+
+                    reject(err);
+
+                });
+
+            } else {
+
+                console.log(`Use cache for id : ${cacheId}`);
+                resolve(cache.result);
+
+            }
+
+
+        }).catch((err) => {
+            reject(err);
+        });
+
+
+
 
     });
 };
@@ -42,10 +117,10 @@ const parseResult = (result) => {
     const regex = /【.+?】 \[.+?\]  】/g;
     const match = result.match(regex);
     const wordScoreArray = {
-        totalLike : 0,
-        totalJoy : 0,
-        totalAnger : 0,
-        words : {},
+        totalLike: 0,
+        totalJoy: 0,
+        totalAnger: 0,
+        words: {},
     };
 
     if (match !== null) {
@@ -57,7 +132,7 @@ const parseResult = (result) => {
         return wordScoreArray;
     } else {
         console.log(`No emotional result was found : ${result}`);
-        return  wordScoreArray;
+        return wordScoreArray;
     }
 
 };
@@ -91,7 +166,7 @@ const parseOneWordScore = (entry, resultObj) => {
     resultObj.totalJoy += joy;
     resultObj.totalAnger += anger;
 
-    if(wordScoreObj) {
+    if (wordScoreObj) {
 
         /*
          * Update existing object
@@ -109,7 +184,7 @@ const parseOneWordScore = (entry, resultObj) => {
         resultObj.words[word] = {
             like: like,
             joy: joy,
-            anger:anger,
+            anger: anger,
             count: 1,
         };
 
@@ -117,4 +192,5 @@ const parseOneWordScore = (entry, resultObj) => {
 
 };
 
+module.exports.analyseWithCache = analyseWithCache;
 module.exports.analyse = analyse;
