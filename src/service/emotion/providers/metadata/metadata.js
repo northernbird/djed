@@ -1,8 +1,23 @@
 import request from 'request-promise';
 import urlencode from 'urlencode';
 import _ from 'lodash';
+import MetadataCacheModel from '../../../../models/metadata';
+const MetadataCache = MetadataCacheModel.MetadataCache;
 
-const analyse = (textString) => {
+const persist = (id, result) => {
+
+    const dbCache = new MetadataCache({id: id, result: result});
+
+    dbCache
+        .save()
+        .then(function (savedDoc) {
+            console.log(`Doc has been sucessfully saved : ${JSON.stringify(savedDoc)}`);
+        }).catch((err) => {
+        console.log(`Error occurred by saving service request : ${err.stack}`);
+    });
+};
+
+const analyse = (cacheId, textString) => {
 
     return new Promise((resolve, reject) => {
         const API_KEY = process.env['METADATA_API_KEY'];
@@ -11,6 +26,7 @@ const analyse = (textString) => {
 
                 const json = JSON.parse(stringResult);
                 const result = parseResult(urlencode.decode(json.analyzed_text));
+                persist(cacheId, result);
                 resolve(result);
 
             })

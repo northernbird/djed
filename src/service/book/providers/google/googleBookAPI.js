@@ -47,6 +47,7 @@ const getBookInfoByIndexAsAsync = (author, index, callback) => {
                 if (volumnInfo.authors && volumnInfo.authors.length === 1 && (checkDescription(volumnInfo.description))) {
 
                     mappedResult.push({
+                        id : item.id,
                         title: volumnInfo.title,
                         description: volumnInfo.description,
                         author: volumnInfo.authors,

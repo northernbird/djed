@@ -69,7 +69,7 @@ const analyseBooks = (bookInfos, callback) => {
      * Analyse for books
      */
     _.forEach(bookInfos, (bookInfo) => {
-        promises.push(emotionAnalyser.asyncAnalyse(bookInfo.description, bookInfo));
+        promises.push(emotionAnalyser.asyncAnalyse(bookInfo.description, bookInfo, bookInfo.id));
     });
 
     /*

@@ -20,7 +20,7 @@ const analyse = (textString)=> {
     return wait.for(callServices, textString);
 };
 
-const asyncAnalyse = (textString, optionalInfo)=> {
+const asyncAnalyse = (textString, optionalInfo, cacheId)=> {
 
 /*    return new Promise((resolve, reject)=>{
 
@@ -41,8 +41,9 @@ const asyncAnalyse = (textString, optionalInfo)=> {
 
     return new Promise((resolve, reject)=>{
 
-        metadata.analyse(textString).then((result)=>{
+        metadata.analyse(cacheId, textString).then((result)=>{
             resolve({
+                id : cacheId,
                 result : result,
                 optionalInfo: optionalInfo
             });
