@@ -2,12 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>葵ライブラリ</title>
+    <title>葵・雅の本サーチ</title>
+    <script src="/js/AITalkWebAPI.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        .display-off {
+            display: none;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+
+            // (1) 合成内容設定
+            var target_text = '雅があなたの為におすすめの本を探します。今の気分を入力してね。';
+
+            // (2) AITalkWebAPIを使うためのインスタンス作成
+            var aitalk = new AITalkWebAPI();
+
+            // (3) インスタンスに指定したいパラメータをセット
+            aitalk.text = target_text;
+            aitalk.speaker_name = 'miyabi_west';
+            aitalk.speed 			= 1.2; 				// 話速（0.50-4.00）
+            aitalk.pitch 			= 1.8; 				// ピッチ（0.50-2.00）
+            aitalk.range 			= 5.5; 				// 抑揚（0.00-2.00）
+            aitalk.style = {"j":"1","s":"0","a":"0"};
+
+            // (3) 合成
+            aitalk.synth();
+        };
+    </script>
 </head>
 <body>
-    <div>葵があなたの為におすすめの本を探します。</div>
 
-    
+    <audio class="display-off" id="audio" controls autoplay></audio>
+
+    <div>雅があなたの為におすすめの本を探します。</div>
+
+    <div>
+        今の気分を入力してね。
+    </div>
+
+    <div>
+        <form action="/api/facets" method="get">
+
+            <input type="text" id="searchText" name="searchText" />
+            <p><input type="submit" name="submit" value="送信" /></p>
+
+        </form>
+    </div>
+
 
 </body>
 </html>

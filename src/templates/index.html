@@ -53,10 +53,7 @@
         </article>
         <aside class="recommendation_list">
             <table class="recommendation_list_table">
-
-                    あなたの入力 <br>
                     {{result.input.totalLike}}/{{result.input.totalJoy}}/{{result.input.totalAnger}}
-                
                     <tbody>
                         <tr>
                             <th>題名</th>
@@ -78,9 +75,15 @@
                         </tr>
                     {% endfor %}
                     </tbody>
-                </table>
+            </table>
         </aside>
     </main>
+    
+    あなたの入力 <br>
+    {{result.input.totalLike}}/{{result.input.totalJoy}}/{{result.input.totalAnger}}
+    <input type="hidden" id="inputTotalLike" value="{{result.input.totalLike}}" />
+    <input type="hidden" id="inputTotalJoy" value="{{result.input.totalJoy}}" />
+    <input type="hidden" id="inputTotalAnger" value="{{result.input.totalAnger}}" />
 
     <script>
         function displayRandomMiyabi() {

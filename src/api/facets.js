@@ -20,9 +20,9 @@ export default ({ config, db }) => resource({
 
 	},
 
-/*    read(req, res) {
-        return res.render('index.html');
-    },*/
+    read(req, res) {
+        return res.render('input.html');
+    },
 
 });
 
