@@ -43,7 +43,7 @@ nunjucks.configure(app.get('views'), {
     autoescape: true,
     express: app
 });
-
+app.use(express.static('public'));
 
 
 // connect to db

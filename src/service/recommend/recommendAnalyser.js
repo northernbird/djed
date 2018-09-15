@@ -62,7 +62,13 @@ const analyseBooks = (bookInfos, callback) => {
      */
     _.forEach(bookInfos, (bookInfo) => {
         console.log(JSON.stringify(bookInfo));
-        _.forEach(bookInfo, (oneBook)=> {
+        /*
+         * Duplicate titles should be removed
+         */
+        const removedDuplicates = _.uniqBy(bookInfo, function (e) {
+            return e.title;
+        });
+        _.forEach(removedDuplicates, (oneBook)=> {
             promises.push(emotionAnalyser.asyncAnalyse(oneBook.description, oneBook, oneBook.id));
         });
     });
