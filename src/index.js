@@ -8,6 +8,8 @@ import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 import dotenv from 'dotenv'
+import nunjucks from 'nunjucks';
+import path from 'path';
 
 /*
  * Load .env
@@ -28,6 +30,21 @@ app.use(cors({
 app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
+
+/*// Setup nunjucks templating engine
+nunjucks.configure('views', {
+    autoescape: true,
+    express: app
+});*/
+
+app.set('views', path.join(__dirname, 'templates'));
+app.set('view engine', 'html');
+nunjucks.configure(app.get('views'), {
+    autoescape: true,
+    express: app
+});
+
+
 
 // connect to db
 initializeDb( db => {

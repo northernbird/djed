@@ -30,12 +30,14 @@ const analyse = (author, textString) => {
     /*
      * Get book info
      */
-    const bookInfos = wait.for(bookProvider.getBookInfoAsSync, author);
+    const bookInfos = wait.for(bookProvider.getAllBookInfos, ['萩原朔太郎', '夏目漱石']);
     console.log(`${bookInfos.length} data is fetched from book API service.`);
+
+    //return bookInfos;
 
     /*
      * Analyse book info
-     */
+    */
     const bookResult = wait.for(analyseBooks, bookInfos);
 
     /*
@@ -59,7 +61,10 @@ const analyseBooks = (bookInfos, callback) => {
      * Analyse for books
      */
     _.forEach(bookInfos, (bookInfo) => {
-        promises.push(emotionAnalyser.asyncAnalyse(bookInfo.description, bookInfo, bookInfo.id));
+        console.log(JSON.stringify(bookInfo));
+        _.forEach(bookInfo, (oneBook)=> {
+            promises.push(emotionAnalyser.asyncAnalyse(oneBook.description, oneBook, oneBook.id));
+        });
     });
 
     /*
