@@ -81,10 +81,10 @@ AITalkWebAPI.prototype.synth = function() {
       } else {					// 合成成功
         var audio = document.getElementById('audio');
         audio.src = window.URL.createObjectURL(req.response);
-        status.innerHTML = "合成に成功しました";
+        // status.innerHTML = "合成に成功しました";
       }
     } else {						// 構成中
-      status.innerHTML = "合成を実行しています";
+      // status.innerHTML = "合成を実行しています";
     }
   };
 
