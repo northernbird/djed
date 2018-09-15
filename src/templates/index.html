@@ -30,12 +30,57 @@
 <head>
     <meta charset="UTF-8">
     <title>AITalk WebAPI Sample (JavaScript)</title>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
 </head>
 <body>
 <div id="status">読み込み中です。</div>
 <audio id="audio" controls autoplay></audio>
 
-TEST : {{result | dump }}
+<table class="togglable-sub table table-responsive">
+
+    あなたの入力 <br>
+    {{result.input.totalLike}}/{{result.input.totalJoy}}/{{result.input.totalAnger}}
+
+    <tbody>
+        <tr>
+            <th>題名</th>
+            <th>著者</th>
+            <th>Like/Anger/Fear</th>
+            <th>紹介/あらすじ</th>
+        </tr>
+    {% for book in result.books %}
+        <tr>
+            <td>{{book.optionalInfo.title}}</td>
+            <td>{{book.optionalInfo.author}}</td>
+            <th>{{book.result.totalLike}}/{{book.result.totalJoy}}/{{book.result.totalAnger}}</th>
+            <td>
+                <input type="hidden" value="{{book.optionalInfo.description}}" id="{{book.id}}" />
+                <a href="javascript:void(0);" onclick="return submitClicked();">
+                    読む
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
 </body>
 <script>
     // AITalk WebAPI を扱うクラス
@@ -141,6 +186,4 @@ TEST : {{result | dump }}
         aitalk.synth();
     };
 </script>
-
-
 </html>

@@ -18,13 +18,11 @@ export default ({ config, db }) => resource({
         console.log('Request : ' + JSON.stringify(req.query));
         wait.launchFiber(handle, req, res);
 
-
-
 	},
 
-    read(req, res) {
+/*    read(req, res) {
         return res.render('index.html');
-    },
+    },*/
 
 });
 
@@ -33,9 +31,7 @@ function handle(req, res) {
     const searchText = req.query.searchText;
     const author = req.query.author;
     const result = analyser.analyse(author, searchText);
-    //return res.json(result);
+    return res.render('index.html', {result : result})
 
-    console.log(JSON.stringify(result));
-    return res.render('index.html', {result : result} );
 
 }
