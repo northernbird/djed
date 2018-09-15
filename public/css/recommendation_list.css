@@ -26,6 +26,10 @@ tr:nth-child(odd) {
     display: none;
 }
 
+.akane_image_box {
+    display: inline-block;
+}
+
 .recommendation_list {
     display: inline-block;
 }
