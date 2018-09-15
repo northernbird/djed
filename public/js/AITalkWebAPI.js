@@ -7,7 +7,7 @@ function AITalkWebAPI()
 
   this.username = this.ID;
   this.password = this.PW;
-  this.speaker_name 	= 'miyabi_west';		// 話者名
+  this.speaker_name 	= 'aoi';		// 話者名
   this.style 			= '{"j":"1.0"}'; 	// 感情パラメータ
   this.input_type 	= ''; 			// 合成文字種別
   this.text 			= ''; 				// 合成文字
@@ -53,6 +53,10 @@ AITalkWebAPI.prototype.speakOutMessage = function(speaker_name, description) {
 
   aitalk.text = description;
   aitalk.speaker_name = speaker_name;
+  aitalk.speed 			= 1.2; 				// 話速（0.50-4.00）
+  aitalk.pitch 			= 1.8; 				// ピッチ（0.50-2.00）
+  aitalk.range 			= 5.5; 				// 抑揚（0.00-2.00）
+  aitalk.style = {"j":"1","s":"0","a":"0"};
   // aitalk.style = '{"j":"1.0"}';
 
   // 合成
@@ -94,11 +98,55 @@ AITalkWebAPI.prototype.synth = function() {
   req.send(this.getEncodedParam());
 }
 
+function likeScoreToDescription(score) {
+    if (score < 0) {
+        return "嫌な気持ちが多く";
+    }
+
+    if (score ===  0) {
+        return "";
+    }
+
+    if (score > 0) {
+        return "好きな気持ちが多く";
+    }
+}
+
+function joyScoreToDescription(score) {
+    if (score < 0) {
+        return "とっても喜んでいて";
+    }
+
+    if (score ===  0) {
+        return "";
+    }
+
+    if (score > 0) {
+        return "とっても悲しくて";
+    }
+}
+
+function angerScoreToDescription(score) {
+    if (score < 0) {
+        return "どうやら怒っていて";
+    }
+
+    if (score ===  0) {
+        return "";
+    }
+
+    if (score > 0) {
+        return "怖い気持ちで一杯で";
+    }
+}
+
 // メイン処理
 window.onload = function() {
 
   // (1) 合成内容設定
-  var target_text = "わい名前はみやびやでぇ！";
+  var test1 = "なるほど。あなたは今" + likeScoreToDescription(document.getElementById('inputTotalLike').value) + joyScoreToDescription(document.getElementById('inputTotalJoy').value)　+ joyScoreToDescription(document.getElementById('inputTotalAnger').value);
+　var test2 = "っていう感じだね。";
+  var target_text = test1 + test2 + "そんなあなたの為に探してみたよ。あらすじが知りたかったら、「読む」ボタンをクリックしていね。葵が読んでくれるよ。";
 
   // (2) AITalkWebAPIを使うためのインスタンス作成
     var aitalk = new AITalkWebAPI();
@@ -106,6 +154,10 @@ window.onload = function() {
   // (3) インスタンスに指定したいパラメータをセット
   aitalk.text = target_text;
   aitalk.speaker_name = 'miyabi_west';
+    aitalk.speed 			= 1.2; 				// 話速（0.50-4.00）
+    aitalk.pitch 			= 1.8; 				// ピッチ（0.50-2.00）
+    aitalk.range 			= 5.5; 				// 抑揚（0.00-2.00）
+    aitalk.style = {"j":"1","s":"0","a":"0"};
   // aitalk.style = '{"j":"1.0"}';
 
   // (3) 合成

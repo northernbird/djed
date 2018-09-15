@@ -58,8 +58,7 @@
             $('.read').click(function (event) {
                 var description = $(this).closest('[read-description-td]').find("input[type='hidden']").val();
                 var aitalk = new AITalkWebAPI();
-                aitalk.speakOutMessage('miyabi_west', description);
-                alert("AAA" + description);
+                aitalk.speakOutMessage('aoi', description);
             });
         });
     </script>
@@ -72,6 +71,9 @@
 
     あなたの入力 <br>
     {{result.input.totalLike}}/{{result.input.totalJoy}}/{{result.input.totalAnger}}
+    <input type="hidden" id="inputTotalLike" value="{{result.input.totalLike}}" />
+    <input type="hidden" id="inputTotalJoy" value="{{result.input.totalJoy}}" />
+    <input type="hidden" id="inputTotalAnger" value="{{result.input.totalAnger}}" />
 
     <tbody>
         <tr>
