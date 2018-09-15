@@ -99,43 +99,49 @@ AITalkWebAPI.prototype.synth = function() {
 }
 
 function likeScoreToDescription(score) {
-    if (score < 0) {
+    var number = new Number(score);
+
+    if (number < 0) {
         return "嫌な気持ちが多く";
     }
 
-    if (score ===  0) {
+    if (number ===  0) {
         return "";
     }
 
-    if (score > 0) {
+    if (number > 0) {
         return "好きな気持ちが多く";
     }
 }
 
 function joyScoreToDescription(score) {
-    if (score < 0) {
+  var number = new Number(score);
+
+    if (number < 0) {
         return "とっても喜んでいて";
     }
 
-    if (score ===  0) {
+    if (number ===  0) {
         return "";
     }
 
-    if (score > 0) {
+    if (number > 0) {
         return "とっても悲しくて";
     }
 }
 
 function angerScoreToDescription(score) {
-    if (score < 0) {
+  var number = new Number(score);
+
+    if (number < 0) {
         return "どうやら怒っていて";
     }
 
-    if (score ===  0) {
+    if (number ===  0) {
         return "";
     }
 
-    if (score > 0) {
+    if (number > 0) {
         return "怖い気持ちで一杯で";
     }
 }
@@ -144,7 +150,7 @@ function angerScoreToDescription(score) {
 window.onload = function() {
 
   // (1) 合成内容設定
-  var test1 = "なるほど。あなたは今" + likeScoreToDescription(document.getElementById('inputTotalLike').value) + joyScoreToDescription(document.getElementById('inputTotalJoy').value)　+ joyScoreToDescription(document.getElementById('inputTotalAnger').value);
+  var test1 = "なるほど。あなたは今" + likeScoreToDescription(document.getElementById('inputTotalLike').value) + joyScoreToDescription(document.getElementById('inputTotalJoy').value)　+ angerScoreToDescription(document.getElementById('inputTotalAnger').value);
 　var test2 = "っていう感じだね。";
   var target_text = test1 + test2 + "そんなあなたの為に探してみたよ。あらすじが知りたかったら、「読む」ボタンをクリックしていね。葵が読んでくれるよ。";
 
