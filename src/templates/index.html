@@ -30,27 +30,7 @@
 <head>
     <meta charset="UTF-8">
     <title>AITalk WebAPI Sample (JavaScript)</title>
-    <style>
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-
-        .display-off {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/recommendation_list.css" type="text/css">
     <script src="/js/AITalkWebAPI.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
     <script>
@@ -59,44 +39,75 @@
                 var description = $(this).closest('[read-description-td]').find("input[type='hidden']").val();
                 var aitalk = new AITalkWebAPI();
                 aitalk.speakOutMessage('miyabi_west', description);
-                alert("AAA" + description);
             });
         });
     </script>
 </head>
 <body>
-<!--<div id="status">読み込み中です。</div>-->
-<audio class="display-off" id="audio" controls autoplay></audio>
+    <header>
 
-<table class="togglable-sub table table-responsive">
+    </header>
+    <nav>
 
-    あなたの入力 <br>
-    {{result.input.totalLike}}/{{result.input.totalJoy}}/{{result.input.totalAnger}}
+    </nav>
+    <main>
+        <article class="akane_image_box">
+            <!--<div id="status">読み込み中です。</div>-->
+            <audio class="display-off" id="audio" controls autoplay></audio>
+            <img src="" alt="akane" class="akane_image" id="akane_image">
 
-    <tbody>
-        <tr>
-            <th>題名</th>
-            <th>著者</th>
-            <th>Like/Anger/Fear</th>
-            <th>紹介/あらすじ</th>
-        </tr>
-    {% for book in result.books %}
-        <tr>
-            <td>{{book.optionalInfo.title}}</td>
-            <td>{{book.optionalInfo.author}}</td>
-            <th>{{book.result.totalLike}}/{{book.result.totalJoy}}/{{book.result.totalAnger}}</th>
-            <td read-description-td>
-                <input type="hidden" value="{{book.optionalInfo.description}}" id="{{book.id}}" read-description-hidden />
-                <a class="read" href="javascript:void(0);">
-                    読む
-                </a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        </article>
+        <aside class="recommendation_list">
+            <table class="recommendation_list_table">
 
+                    あなたの入力 <br>
+                    {{result.input.totalLike}}/{{result.input.totalJoy}}/{{result.input.totalAnger}}
+                
+                    <tbody>
+                        <tr>
+                            <th>題名</th>
+                            <th>著者</th>
+                            <th>Like/Anger/Fear</th>
+                            <th>紹介/あらすじ</th>
+                        </tr>
+                    {% for book in result.books %}
+                        <tr>
+                            <td>{{book.optionalInfo.title}}</td>
+                            <td>{{book.optionalInfo.author}}</td>
+                            <th>{{book.result.totalLike}}/{{book.result.totalJoy}}/{{book.result.totalAnger}}</th>
+                            <td read-description-td>
+                                <input type="hidden" value="{{book.optionalInfo.description}}" id="{{book.id}}" read-description-hidden />
+                                <a class="read" href="javascript:void(0);">
+                                    読む
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        </aside>
+    </main>
+    <footer>
 
+    </footer>
+
+    <script>
+        function displayRandomMiyabi() {
+            var $akane_image = $('#akane_image');
+
+            var min = 1;
+            var max = 4;
+            var random_number = Math.floor(Math.random() * (max + 1 - min)) + min;
+            var image_path = '/images/akane/akane$$$.png';
+            image_path = image_path.replace('$$$', random_number);
+            $akane_image.attr('src', image_path);
+        }
+
+        $(window).on('load', function() {
+            // TODO: 後でデフォルトの音声をここで再生する
+            displayRandomMiyabi();
+        });
+        
+    </script>
 </body>
-
 </html>
